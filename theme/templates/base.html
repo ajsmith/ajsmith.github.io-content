@@ -1,134 +1,211 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}{{ SITENAME }}{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="{{ AUTHOR }}">
+<!doctype html>
+<html class="no-js" lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Le styles -->
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css" />
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-      .tag-1 {
-        font-size: 13pt;
-      }
-      .tag-2 {
-        font-size: 10pt;
-      }
-      .tag-2 {
-        font-size: 8pt;
-      }
-      .tag-4 {
-        font-size: 6pt;
-     }
-    </style>
-    <link href="{{ SITEURL }}/theme/css/bootstrap-responsive.min.css" rel="stylesheet">
-        <link href="{{ SITEURL }}/theme/css/font-awesome.css" rel="stylesheet">
+		<title>{% block windowtitle %}{{ SITENAME }}{% endblock %}</title>
+		<meta name="description" content="">
+		<meta name="author" content="{{ AUTHOR }}">
 
-    <link href="{{ SITEURL }}/theme/css/pygments.css" rel="stylesheet">
+		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/foundation.css" />
+		{% if not FOUNDATION_PYGMENT_THEME %}
+		{% set FOUNDATION_PYGMENT_THEME = 'monokai' %}
+		{% endif %}
+		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygment/{{ FOUNDATION_PYGMENT_THEME }}.css" />
+		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/custom.css" />
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+		{% if FOUNDATION_ALTERNATE_FONTS %}
+		<!-- GOOGLE WEB FONTS -->
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono|Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/alt-fonts.css" />
+		{% endif %}
 
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="{{ SITEURL }}/theme/images/favicon.ico">
-    <link rel="apple-touch-icon" href="{{ SITEURL }}/theme/images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ SITEURL }}/theme/images/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ SITEURL }}/theme/images/apple-touch-icon-114x114.png">
+		<script src="{{ SITEURL }}/theme/js/modernizr.js"></script>
 
-    <link href="{{ SITEURL }}/{{ FEED }}" type="application/atom+xml" rel="alternate" title="{{ SITENAME }} ATOM Feed" />
-    {% if FEED_RSS %}
-    <link href="{{ SITEURL }}/{{ FEED_RSS }}" type="application/atom+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
-    {% endif %}
+		<!-- Feeds -->
+		{% if FEED_ALL_ATOM %}
+		<link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate" title="{{ SITENAME }} Atom Feed" />
+		{% endif %}
+		{% if FEED_ALL_RSS %}
+		<link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
+		{% endif %}
 
-  </head>
+		{% include "analytics.html" %}
 
-  <body>
+		<!-- mathjax config similar to math.stackexchange -->
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			jax: ["input/TeX", "output/HTML-CSS"],
+			tex2jax: {
+				inlineMath: [ ['$', '$'] ],
+				displayMath: [ ['$$', '$$']],
+				processEscapes: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+			},
+			messageStyle: "none",
+			"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+		});
+		</script>
+		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+	</head>
+	<body>
+		<div class="off-canvas-wrap">
+			<div class="inner-wrap">
+				<!-- mobile top bar to activate nav -->
+				<nav class="tab-bar show-for-small">
+					<section class="left-small">
+						<a class="left-off-canvas-toggle menu-icon" ><span></span></a>
+					</section>
 
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="{{ SITEURL }}/index.html">{{ SITENAME }} {% if SITESUBTITLE %} <strong>{{ SITESUBTITLE }}</strong>{% endif %}</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              {% for title, link in MENUITEMS %}
-                  <li><a href="{{ link }}">{{ title }}</a></li>
-              {% endfor %}
-              {% if DISPLAY_PAGES_ON_MENU %}
-              {% for page in PAGES %}
-                <li><a href="{{ SITEURL }}/{{ page.url }}">{{ page.title }}</a></li>
-              {% endfor %}
-                          <li class="divider-vertical"></li>
-              {% endif %}
-              {% for cat, null in categories %}
-                  <li {% if cat == category %}class="active"{% endif %}>
-                    <a href="{{ SITEURL }}/{{ cat.url }}">
-						<i class="icon-folder-open icon-large"></i>{{ cat }}
-					</a>
-                  </li>
-              {% endfor %}
+					<section class="middle tab-bar-section">
+						<h1 class="title">{{ SITENAME|replace(' ', '&nbsp;') }}</h1>
+					</section>
+				</nav>
 
-                          <ul class="nav pull-right">
-                                <li><a href="{{ SITEURL }}/archives.html"><i class="icon-th-list"></i>Archives</a></li>
-                          </ul>
+				<!-- mobile side bar nav -->
+				<aside class="left-off-canvas-menu">
+					<ul class="off-canvas-list">
+						<li><a href="{{ SITEURL }}">Home</a></li>
+						<li><label>Categories</label></li>
+						{% for cat, articles in categories %}
+							<li {% if cat == category %}class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
+						{% endfor %}
 
-            </ul>
-            <!--<p class="navbar-text pull-right">Logged in as <a href="#">username</a></p>-->
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+						<li><label>Links</label></li>
+							{% for name, link in LINKS %}
+							<li><a href="{{ link }}">{{ name }}</a></li>
+							{% endfor %}
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="span9" id="content">
-            {% block content %}
-            {% endblock %}
-        </div><!--/span-->
+						{% if FOUNDATION_TAGS_IN_MOBILE_SIDEBAR %}
+						<li><label>Tags</label></li>
+							{% for tag, articles in tags|sort %}
+							<li><a href="{{ SITEURL }}/{{ tag.url|replace(' ', '-') }}">{{ tag }}</a></li>
+							{% endfor %}
+						{% endif %}
 
-                <div class="span3 well sidebar-nav" id="sidebar">
-            {% include 'sidebar.html' %}
-        </div><!--/.well -->
+						{% if MONTH_ARCHIVE_SAVE_AS %}
+						<li><label>Monthly Archives</label></li>
+							{% for year, date_year in dates|groupby( 'date.year' )|sort(reverse=True) %}
+								{% for month, articles in date_year|groupby( 'date.month' )|sort(reverse=True) %}
+									<li><a href="/{{ MONTH_ARCHIVE_SAVE_AS.format(date=articles[0].date) }}">{{ articles[0].date.strftime('%B') }} {{ year }} ({{ articles|count }})</a></li>
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
 
-      </div><!--/row-->
+						<li><label>Social</label></li>
+							{% for name, link in SOCIAL|sort %}
+							<li><a href="{{ link }}">{{ name }}</a></li>
+							{% endfor %}
+					</ul>	
+				</aside>
 
-      <hr>
+				<!-- top bar nav -->
+				<nav class="top-bar hide-for-small-only" data-topbar>
+					<ul class="title-area">
+						<li class="name">
+							<h1><a href="{{ SITEURL }}/">{{ SITENAME }}</a></h1>
+						</li>
+					</ul>
 
-      <footer>
-        <address id="about">
-                Proudly powered by <a href="http://pelican.notmyidea.org/">Pelican <i class="icon-external-link"></i></a>,
-                                which takes great advantage of <a href="http://python.org">Python <i class="icon-external-link"></i></a>.
-        </address><!-- /#about -->
+					<section class="top-bar-section">
+						<ul class="left">
+							{% for cat, articles in categories %}
+								<li {% if cat == category %}class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
+							{% endfor %}
+						</ul>
+                        <ul class="right">                                                                                                                                           
+                             {% for pg in PAGES | sort(attribute='index') %}                                                                                                          
+                                 {% if 'http://' in pg.url -%}                                                                                                                        
+                                     <li><a href="{{ pg.url }}">{{ pg.title }}</a></li>                                                                                               
+                                 {% else %}····                                                                                                                                       
+                                     <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}">{{ pg.title }}</a></li>                                    
+                                 {% endif %}                                                                                                                                          
+                             {% endfor %}                                                                                                                                             
+                        </ul>  
+					</section>
+				</nav>
 
-        <p>The theme is from <a href="http://twitter.github.com/bootstrap/">Bootstrap from Twitter <i class="icon-external-link"></i></a>,
-                   and <a href="http://fortawesome.github.com/Font-Awesome/">Font-Awesome <i class="icon-external-link"></i></a>, thanks!</p>
-      </footer>
+				<!-- Main Page Content and Sidebar -->
+				<section class="main-section">
+					<div class="row">
+						<!-- Main Content -->
+						<div class="medium-9 small-12 columns" role="content">
+							{% if pagetitle is defined %}
+							<div class="row">
+								<div class="small-12 columns">
+									<h2>{{ pagetitle }}</h2>
+								</div>
+							</div>
+							{% endif %}
+							{% block content %}{% endblock %}
+						</div>
+						<!-- End Main Content -->
+						<!-- Sidebar -->
+						<aside class="medium-3 hide-for-small-only columns">
+							<div class="panel">
+								<h5>Links</h5>
+								<ul class="side-nav">
+									{% for name, link in LINKS %}
+									<li><a href="{{ link }}">{{ name }}</a></li>
+									{% endfor %}
+								</ul>
+							</div>
 
-    </div><!--/.fluid-container-->
+							<div class="panel">
+								<h5>Tags</h5>
+								<ul class="tag-cloud">
+									{% for tag in tag_cloud %}
+									<li><a href="/tag/{{ tag.0|lower|replace(' ', '-') }}.html" class="tag-{{ tag.1 }}">{{ tag.0 }}</a></li>
+									{% endfor %}
+								</ul>
+							</div>
 
+							{% if MONTH_ARCHIVE_SAVE_AS %}
+							<div class="panel">
+								<h5>Monthly Archives</h5>
+								<ul class="side-nav">
+									{% for year, date_year in dates|groupby( 'date.year' )|sort(reverse=True) %}
+										{% for month, articles in date_year|groupby( 'date.month' )|sort(reverse=True) %}
+											<li><a href="/{{ MONTH_ARCHIVE_SAVE_AS.format(date=articles[0].date) }}">{{ articles[0].date.strftime('%B') }} {{ year }} ({{ articles|count }})</a></li>
+										{% endfor %}
+									{% endfor %}
+								</ul>
+							</div>
+							{% endif %}
 
-    {% include 'analytics.html' %}
-    {% include 'piwik.html' %}
-    {% include 'disqus_script.html' %}
+							<div class="panel">
+								<h5>Social</h5>
+								<ul class="side-nav">
+									{% for name, link in SOCIAL|sort %}
+									<li><a href="{{ link }}">{{ name }}</a></li>
+									{% endfor %}
+								</ul>
+							</div>
+						</aside>
+						<!-- End Sidebar -->
+					</div>
 
-    <!-- Le javascript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{ SITEURL }}/theme/js/jquery-1.7.2.min.js"></script>
-    <script src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
-  </body>
+					<!-- Footer -->
+					<footer class="row">
+						<div class="medium-9 small-12">
+							<hr/>
+							{% if not FOUNDATION_FOOTER_TEXT %}
+							{% set FOUNDATION_FOOTER_TEXT = 'Powered by <a href="http://getpelican.com">Pelican</a> and <a href="http://foundation.zurb.com/">Zurb Foundation</a>. Theme by <a href="http://hamaluik.com">Kenton Hamaluik</a>.' %}
+							{% endif %}
+							<p class="text-center">{{ FOUNDATION_FOOTER_TEXT }}</p>
+						</div>
+					</footer>
+					<!-- End Footer -->
+				</section>
+				<a class="exit-off-canvas"></a>
+			</div><!--off-canvas inner-->
+		</div><!--off-canvas wrap-->
+
+		<script src="{{ SITEURL }}/theme/js/jquery.js"></script>
+		<script src="{{ SITEURL }}/theme/js/foundation.min.js"></script>
+		<script>
+			$(document).foundation();
+		</script>
+	</body>
 </html>
