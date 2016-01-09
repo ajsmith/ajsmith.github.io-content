@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Alex Smith'
-SITENAME = u'Adventurous Tales in Software Development'
+SITENAME = u'Tech with Benefits'
 SITEURL = ''
 
 PATH = 'content'
@@ -28,7 +28,7 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
 SOCIAL = (('You can add links in your config file', '#'),
           ('Another social link', '#'),)
 
-DEFAULT_PAGINATION = 20
+DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
