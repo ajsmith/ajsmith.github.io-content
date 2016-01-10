@@ -1,211 +1,199 @@
-<!doctype html>
-<html class="no-js" lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="{% block html_lang %}{{ DEFAULT_LANG }}{% endblock %}"
+      {% if USE_OPEN_GRAPH %}
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml"{% endif %}>
+<head>
+    <title>{% block title %}{{ SITENAME }}{% endblock %}</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title>{% block windowtitle %}{{ SITENAME }}{% endblock %}</title>
-		<meta name="description" content="">
-		<meta name="author" content="{{ AUTHOR }}">
+    {% if 'liquid_tags.notebook' in PLUGINS %}
+        {% include 'includes/liquid_tags_nb_header.html' %}
+    {% endif %}
 
-		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/foundation.css" />
-		{% if not FOUNDATION_PYGMENT_THEME %}
-		{% set FOUNDATION_PYGMENT_THEME = 'monokai' %}
-		{% endif %}
-		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygment/{{ FOUNDATION_PYGMENT_THEME }}.css" />
-		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/custom.css" />
+    {# Favicons are a touchy subject. For reasoning for the following code, see: http://stackoverflow.com/a/23851464/872397 #}
+    {% if FAVICON %}
+    <link href="{{ SITEURL }}/{{ FAVICON }}" rel="icon">
+    {% endif %}
+    {% if FAVICON_IE %}
+    <!--[if IE]><link rel="shortcut icon" href="{{ SITEURL }}/{{ FAVICON_IE }}"><![endif]-->
+    {% endif %}
+    {% if TOUCHICON %}
+    <link rel="apple-touch-icon" href="{{ SITEURL }}/{{ TOUCHICON }}">
+    {% endif %}
 
-		{% if FOUNDATION_ALTERNATE_FONTS %}
-		<!-- GOOGLE WEB FONTS -->
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono|Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="{{ SITEURL }}/theme/css/alt-fonts.css" />
-		{% endif %}
+    {% block canonical_rel %}{% endblock %}
 
-		<script src="{{ SITEURL }}/theme/js/modernizr.js"></script>
+    {% block meta %}
+        <meta name="author" content="{{ AUTHOR }}" />
+    {% endblock %}
 
-		<!-- Feeds -->
-		{% if FEED_ALL_ATOM %}
-		<link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate" title="{{ SITENAME }} Atom Feed" />
-		{% endif %}
-		{% if FEED_ALL_RSS %}
-		<link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
-		{% endif %}
+    {# Open Graph tags #}
+    {% if USE_OPEN_GRAPH is not defined %}
+        {% set USE_OPEN_GRAPH = True %}
+    {% endif %}
+    {% if USE_OPEN_GRAPH %}
+    {% block opengraph %}
+    <!-- Open Graph tags -->
+        {% if OPEN_GRAPH_FB_APP_ID %}
+            <meta property="fb:app_id" content="{{ OPEN_GRAPH_FB_APP_ID }}"/>
+        {% endif %}
+        <meta property="og:site_name" content="{{ SITENAME }}" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="{{ SITENAME }}"/>
+        <meta property="og:url" content="{{ SITEURL }}"/>
+        <meta property="og:description" content="{{ SITENAME }}"/>
+        {% if OPEN_GRAPH_IMAGE %}
+            <meta property="og:image"
+                  content="{{ SITEURL }}/{{ OPEN_GRAPH_IMAGE }}"/>
+        {% endif %}
+    {% endblock %}
+    {% endif %}
 
-		{% include "analytics.html" %}
+    {# Twitter Cards tags #}
+    {% include 'includes/twitter_cards.html' %}
 
-		<!-- mathjax config similar to math.stackexchange -->
-		<script type="text/x-mathjax-config">
-		MathJax.Hub.Config({
-			jax: ["input/TeX", "output/HTML-CSS"],
-			tex2jax: {
-				inlineMath: [ ['$', '$'] ],
-				displayMath: [ ['$$', '$$']],
-				processEscapes: true,
-				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-			},
-			messageStyle: "none",
-			"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-		});
-		</script>
-		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-	</head>
-	<body>
-		<div class="off-canvas-wrap">
-			<div class="inner-wrap">
-				<!-- mobile top bar to activate nav -->
-				<nav class="tab-bar show-for-small">
-					<section class="left-small">
-						<a class="left-off-canvas-toggle menu-icon" ><span></span></a>
-					</section>
+    <!-- Bootstrap -->
+    {% if BOOTSTRAP_THEME %}
+        <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.{{ BOOTSTRAP_THEME }}.min.css" type="text/css"/>
+    {% else %}
+        <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
+    {% endif %}
+    <link href="{{ SITEURL }}/theme/css/font-awesome.min.css" rel="stylesheet">
 
-					<section class="middle tab-bar-section">
-						<h1 class="title">{{ SITENAME|replace(' ', '&nbsp;') }}</h1>
-					</section>
-				</nav>
+    <link href="{{ SITEURL }}/theme/css/pygments/{{ PYGMENTS_STYLE|default('native') }}.css" rel="stylesheet">
+    {% if 'tipue_search' in PLUGINS %}
+    <link href="{{ SITEURL}}/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
+    {% endif %}
+    {% if DOCUTIL_CSS %}
+        <link href="{{ SITEURL }}/theme/css/html4css1.css" rel="stylesheet">
+    {% endif %}
+    {% if TYPOGRIFY %}
+        <link href="{{ SITEURL }}/theme/css/typogrify.css" rel="stylesheet">
+    {% endif %}
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/style.css" type="text/css"/>
+    {% if CUSTOM_CSS %}
+        <link href="{{ SITEURL }}/{{ CUSTOM_CSS }}" rel="stylesheet">
+    {% endif %}
+    {% if SHARIFF %}
+        <link href="{{ SITEURL }}/theme/css/shariff/shariff.min.css" rel="stylesheet">
+    {% endif %}
 
-				<!-- mobile side bar nav -->
-				<aside class="left-off-canvas-menu">
-					<ul class="off-canvas-list">
-						<li><a href="{{ SITEURL }}">Home</a></li>
-						<li><label>Categories</label></li>
-						{% for cat, articles in categories %}
-							<li {% if cat == category %}class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
-						{% endfor %}
+    {% if FEED_ALL_ATOM %}
+        <link href="{{ SITEURL }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate"
+              title="{{ SITENAME }} ATOM Feed"/>
+    {% endif %}
+    {% if FEED_ALL_RSS %}
+        <link href="{{ SITEURL }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate"
+              title="{{ SITENAME }} RSS Feed"/>
+    {% endif %}
 
-						<li><label>Links</label></li>
-							{% for name, link in LINKS %}
-							<li><a href="{{ link }}">{{ name }}</a></li>
-							{% endfor %}
+</head>
+<body>
 
-						{% if FOUNDATION_TAGS_IN_MOBILE_SIDEBAR %}
-						<li><label>Tags</label></li>
-							{% for tag, articles in tags|sort %}
-							<li><a href="{{ SITEURL }}/{{ tag.url|replace(' ', '-') }}">{{ tag }}</a></li>
-							{% endfor %}
-						{% endif %}
+<div class="navbar {% if BOOTSTRAP_NAVBAR_INVERSE %}navbar-inverse{% else %}navbar-default{% endif %} navbar-fixed-top" role="navigation">
+	<div class="container{% if BOOTSTRAP_FLUID %}-fluid{% endif %}">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{{ SITEURL }}/" class="navbar-brand">
+                {% if SITELOGO %}<img src="{{ SITEURL }}/{{ SITELOGO }}" width="{{ SITELOGO_SIZE }}"/> {% endif %}
+                {% if not HIDE_SITENAME %}{{ SITENAME }}{% endif %}
+            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                {% for title, link in MENUITEMS %}
+                    <li><a href="{{ link }}">{{ title }}</a></li>
+                {% endfor %}
+                {% if DISPLAY_PAGES_ON_MENU %}
+                    {% for p in PAGES %}
+                         <li{% if p == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ p.url }}">
+                             {{ p.menulabel|default(p.title) }}
+                          </a></li>
+                      {% endfor %}
+                {% endif %}
+                {% if DISPLAY_CATEGORIES_ON_MENU %}
+                    {% for cat, null in categories %}
+                        <li {% if cat == category %}class="active"{% endif %}>
+                            <a href="{{ SITEURL }}/{{ cat.url }}">{{ cat | capitalize }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            {% if 'tipue_search' in PLUGINS %}
+              <li><span>
+                <form class="navbar-search" action="/search">
+                  <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input" required>
+                </form></span>
+              </li>
+            {% endif %}
+              <li><a href="{{ SITEURL }}/{{ ARCHIVES_URL | default('archives.html') }}"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+{% if BANNER and BANNER_ALL_PAGES %}
+    {% include 'includes/banner.html' %}
+{% elif BANNER and not BANNER_ALL_PAGES %}
+    {% block banner %}{% endblock %}
+{% endif %}
+<!-- End Banner -->
+<div class="container{% if BOOTSTRAP_FLUID %}-fluid{% endif %}">
+    <div class="row">
+        {% if not HIDE_SIDEBAR or ABOUT_ME %}
+        <div class="col-sm-9">
+        {% else %}
+        <div class="col-lg-12">
+        {% endif %}
+        {% block breadcrumbs %}
+        {% endblock %}
 
-						{% if MONTH_ARCHIVE_SAVE_AS %}
-						<li><label>Monthly Archives</label></li>
-							{% for year, date_year in dates|groupby( 'date.year' )|sort(reverse=True) %}
-								{% for month, articles in date_year|groupby( 'date.month' )|sort(reverse=True) %}
-									<li><a href="/{{ MONTH_ARCHIVE_SAVE_AS.format(date=articles[0].date) }}">{{ articles[0].date.strftime('%B') }} {{ year }} ({{ articles|count }})</a></li>
-								{% endfor %}
-							{% endfor %}
-						{% endif %}
+        {% block content %}
+        {% endblock %}
+        </div>
+        {% if not HIDE_SIDEBAR or ABOUT_ME %}
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+            {% if ABOUT_ME %}
+                {% include 'includes/aboutme.html' %}
+            {% endif %}
+            {% if not HIDE_SIDEBAR %}
+                {% include 'includes/sidebar.html' %}
+            {% endif %}
+            </aside>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'includes/footer.html' %}
 
-						<li><label>Social</label></li>
-							{% for name, link in SOCIAL|sort %}
-							<li><a href="{{ link }}">{{ name }}</a></li>
-							{% endfor %}
-					</ul>	
-				</aside>
+<script src="{{ SITEURL }}/theme/js/jquery.min.js"></script>
 
-				<!-- top bar nav -->
-				<nav class="top-bar hide-for-small-only" data-topbar>
-					<ul class="title-area">
-						<li class="name">
-							<h1><a href="{{ SITEURL }}/">{{ SITENAME }}</a></h1>
-						</li>
-					</ul>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
 
-					<section class="top-bar-section">
-						<ul class="left">
-							{% for cat, articles in categories %}
-								<li {% if cat == category %}class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
-							{% endfor %}
-						</ul>
-                        <ul class="right">                                                                                                                                           
-                             {% for pg in PAGES | sort(attribute='index') %}                                                                                                          
-                                 {% if 'http://' in pg.url -%}                                                                                                                        
-                                     <li><a href="{{ pg.url }}">{{ pg.title }}</a></li>                                                                                               
-                                 {% else %}····                                                                                                                                       
-                                     <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}">{{ pg.title }}</a></li>                                    
-                                 {% endif %}                                                                                                                                          
-                             {% endfor %}                                                                                                                                             
-                        </ul>  
-					</section>
-				</nav>
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="{{ SITEURL }}/theme/js/respond.min.js"></script>
 
-				<!-- Main Page Content and Sidebar -->
-				<section class="main-section">
-					<div class="row">
-						<!-- Main Content -->
-						<div class="medium-9 small-12 columns" role="content">
-							{% if pagetitle is defined %}
-							<div class="row">
-								<div class="small-12 columns">
-									<h2>{{ pagetitle }}</h2>
-								</div>
-							</div>
-							{% endif %}
-							{% block content %}{% endblock %}
-						</div>
-						<!-- End Main Content -->
-						<!-- Sidebar -->
-						<aside class="medium-3 hide-for-small-only columns">
-							<div class="panel">
-								<h5>Links</h5>
-								<ul class="side-nav">
-									{% for name, link in LINKS %}
-									<li><a href="{{ link }}">{{ name }}</a></li>
-									{% endfor %}
-								</ul>
-							</div>
+{% if BANNER %}
+    <script src="{{ SITEURL }}/theme/js/bodypadding.js"></script>
+{% endif %}
+{% include 'includes/github-js.html' %}
+{% include 'includes/disqus_script.html' %}
+{% include 'includes/ga.html' %}
+{% include 'includes/piwik.html' %}
 
-							<div class="panel">
-								<h5>Tags</h5>
-								<ul class="tag-cloud">
-									{% for tag in tag_cloud %}
-									<li><a href="/tag/{{ tag.0|lower|replace(' ', '-') }}.html" class="tag-{{ tag.1 }}">{{ tag.0 }}</a></li>
-									{% endfor %}
-								</ul>
-							</div>
-
-							{% if MONTH_ARCHIVE_SAVE_AS %}
-							<div class="panel">
-								<h5>Monthly Archives</h5>
-								<ul class="side-nav">
-									{% for year, date_year in dates|groupby( 'date.year' )|sort(reverse=True) %}
-										{% for month, articles in date_year|groupby( 'date.month' )|sort(reverse=True) %}
-											<li><a href="/{{ MONTH_ARCHIVE_SAVE_AS.format(date=articles[0].date) }}">{{ articles[0].date.strftime('%B') }} {{ year }} ({{ articles|count }})</a></li>
-										{% endfor %}
-									{% endfor %}
-								</ul>
-							</div>
-							{% endif %}
-
-							<div class="panel">
-								<h5>Social</h5>
-								<ul class="side-nav">
-									{% for name, link in SOCIAL|sort %}
-									<li><a href="{{ link }}">{{ name }}</a></li>
-									{% endfor %}
-								</ul>
-							</div>
-						</aside>
-						<!-- End Sidebar -->
-					</div>
-
-					<!-- Footer -->
-					<footer class="row">
-						<div class="medium-9 small-12">
-							<hr/>
-							{% if not FOUNDATION_FOOTER_TEXT %}
-							{% set FOUNDATION_FOOTER_TEXT = 'Powered by <a href="http://getpelican.com">Pelican</a> and <a href="http://foundation.zurb.com/">Zurb Foundation</a>. Theme by <a href="http://hamaluik.com">Kenton Hamaluik</a>.' %}
-							{% endif %}
-							<p class="text-center">{{ FOUNDATION_FOOTER_TEXT }}</p>
-						</div>
-					</footer>
-					<!-- End Footer -->
-				</section>
-				<a class="exit-off-canvas"></a>
-			</div><!--off-canvas inner-->
-		</div><!--off-canvas wrap-->
-
-		<script src="{{ SITEURL }}/theme/js/jquery.js"></script>
-		<script src="{{ SITEURL }}/theme/js/foundation.min.js"></script>
-		<script>
-			$(document).foundation();
-		</script>
-	</body>
+{% block scripts %}{% endblock %}
+</body>
 </html>
