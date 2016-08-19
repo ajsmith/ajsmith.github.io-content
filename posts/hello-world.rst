@@ -1,5 +1,5 @@
-.. title: Hello, World!
-.. slug: hello-world
+.. title: init();
+.. slug: init
 .. date: 2016-08-18 16:00 EST
 .. tags: first post
 
